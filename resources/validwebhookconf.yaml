@@ -1,0 +1,22 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: quotaguard
+webhooks:
+  - name: quotaguard.malyue.com  # 必须添加的webhook名称
+    clientConfig:
+      service:
+        name: quotaguard
+        namespace: webhook-system
+        path: "/validate"
+        port: 443
+      caBundle: <base64编码的CA证书>  # 需要替换为实际值
+    rules:
+      - operations: ["CREATE","UPDATE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
+    admissionReviewVersions: ["v1"]
+    sideEffects: None
+    timeoutSeconds: 5
+    failurePolicy: Fail

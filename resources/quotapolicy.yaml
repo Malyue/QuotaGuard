@@ -1,0 +1,40 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: quotapolicies.quota.malyue.com
+spec:
+  group: quota.yourdomain.com
+  names:
+    plural: quotapolicies
+    singular: quotapolicy
+    kind: QuotaPolicy
+    shortNames:
+      - qp
+  scope: Cluster
+  versions:
+    - name: v1
+      served: true # 是否启用该版本
+      storage: true # 是否设置为存储版本，只有一个版本可为 true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                target:
+                  type: object
+                  properties:
+                    kind:
+                      type: string
+                      enum: ["Namespace","Team"]
+                    name:
+                      type: string
+                limit:
+                  type: object
+                  properties:
+                    cpu:
+                      type: string
+                    memory:
+                      type: string
+

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: quotaguard
+    namespace: webhook-system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: quotaguard
+  template:
+    metadata:
+      labels:
+        app: quotaguard
+    spec:
+      containers:
+        - name: webhook
+          image: ${image}
+          ports:
+            - containerPort: 8443
+          volumeMounts:
+            - mountPath: /etc/webhook/certs
+              name: cert
+              readOnly: true
+      volumes:
+        - name: cert
+          secret:
+            secretName: webhook-cert
+
