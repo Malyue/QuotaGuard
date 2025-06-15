@@ -40,5 +40,5 @@ func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakList
 
 // QuotaPolicies returns a QuotaPolicyInformer.
 func (v *version) QuotaPolicies() QuotaPolicyInformer {
-	return &quotaPolicyInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+	return &quotaPolicyInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }

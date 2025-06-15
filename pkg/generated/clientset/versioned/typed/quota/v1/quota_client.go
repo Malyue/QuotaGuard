@@ -30,13 +30,13 @@ type QuotaV1Interface interface {
 	QuotaPoliciesGetter
 }
 
-// QuotaV1Client is used to interact with features provided by the quota group.
+// QuotaV1Client is used to interact with features provided by the quota.malyue.com group.
 type QuotaV1Client struct {
 	restClient rest.Interface
 }
 
-func (c *QuotaV1Client) QuotaPolicies() QuotaPolicyInterface {
-	return newQuotaPolicies(c)
+func (c *QuotaV1Client) QuotaPolicies(namespace string) QuotaPolicyInterface {
+	return newQuotaPolicies(c, namespace)
 }
 
 // NewForConfig creates a new QuotaV1Client for the given config.

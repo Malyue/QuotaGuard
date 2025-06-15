@@ -41,44 +41,45 @@ type QuotaPolicyInformer interface {
 type quotaPolicyInformer struct {
 	factory          internalinterfaces.SharedInformerFactory
 	tweakListOptions internalinterfaces.TweakListOptionsFunc
+	namespace        string
 }
 
 // NewQuotaPolicyInformer constructs a new informer for QuotaPolicy type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewQuotaPolicyInformer(client versioned.Interface, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
-	return NewFilteredQuotaPolicyInformer(client, resyncPeriod, indexers, nil)
+func NewQuotaPolicyInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
+	return NewFilteredQuotaPolicyInformer(client, namespace, resyncPeriod, indexers, nil)
 }
 
 // NewFilteredQuotaPolicyInformer constructs a new informer for QuotaPolicy type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewFilteredQuotaPolicyInformer(client versioned.Interface, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
+func NewFilteredQuotaPolicyInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
 	return cache.NewSharedIndexInformer(
 		&cache.ListWatch{
 			ListFunc: func(options metav1.ListOptions) (runtime.Object, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.QuotaV1().QuotaPolicies().List(context.Background(), options)
+				return client.QuotaV1().QuotaPolicies(namespace).List(context.Background(), options)
 			},
 			WatchFunc: func(options metav1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.QuotaV1().QuotaPolicies().Watch(context.Background(), options)
+				return client.QuotaV1().QuotaPolicies(namespace).Watch(context.Background(), options)
 			},
 			ListWithContextFunc: func(ctx context.Context, options metav1.ListOptions) (runtime.Object, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.QuotaV1().QuotaPolicies().List(ctx, options)
+				return client.QuotaV1().QuotaPolicies(namespace).List(ctx, options)
 			},
 			WatchFuncWithContext: func(ctx context.Context, options metav1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.QuotaV1().QuotaPolicies().Watch(ctx, options)
+				return client.QuotaV1().QuotaPolicies(namespace).Watch(ctx, options)
 			},
 		},
 		&apisquotav1.QuotaPolicy{},
@@ -88,7 +89,7 @@ func NewFilteredQuotaPolicyInformer(client versioned.Interface, resyncPeriod tim
 }
 
 func (f *quotaPolicyInformer) defaultInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
-	return NewFilteredQuotaPolicyInformer(client, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
+	return NewFilteredQuotaPolicyInformer(client, f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
 }
 
 func (f *quotaPolicyInformer) Informer() cache.SharedIndexInformer {

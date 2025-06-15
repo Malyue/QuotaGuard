@@ -31,7 +31,7 @@ import (
 // QuotaPoliciesGetter has a method to return a QuotaPolicyInterface.
 // A group's client should implement this interface.
 type QuotaPoliciesGetter interface {
-	QuotaPolicies() QuotaPolicyInterface
+	QuotaPolicies(namespace string) QuotaPolicyInterface
 }
 
 // QuotaPolicyInterface has methods to work with QuotaPolicy resources.
@@ -53,13 +53,13 @@ type quotaPolicies struct {
 }
 
 // newQuotaPolicies returns a QuotaPolicies
-func newQuotaPolicies(c *QuotaV1Client) *quotaPolicies {
+func newQuotaPolicies(c *QuotaV1Client, namespace string) *quotaPolicies {
 	return &quotaPolicies{
 		gentype.NewClientWithList[*quotav1.QuotaPolicy, *quotav1.QuotaPolicyList](
 			"quotapolicies",
 			c.RESTClient(),
 			scheme.ParameterCodec,
-			"",
+			namespace,
 			func() *quotav1.QuotaPolicy { return &quotav1.QuotaPolicy{} },
 			func() *quotav1.QuotaPolicyList { return &quotav1.QuotaPolicyList{} },
 		),

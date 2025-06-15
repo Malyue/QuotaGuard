@@ -29,11 +29,11 @@ type fakeQuotaPolicies struct {
 	Fake *FakeQuotaV1
 }
 
-func newFakeQuotaPolicies(fake *FakeQuotaV1) quotav1.QuotaPolicyInterface {
+func newFakeQuotaPolicies(fake *FakeQuotaV1, namespace string) quotav1.QuotaPolicyInterface {
 	return &fakeQuotaPolicies{
 		gentype.NewFakeClientWithList[*v1.QuotaPolicy, *v1.QuotaPolicyList](
 			fake.Fake,
-			"",
+			namespace,
 			v1.SchemeGroupVersion.WithResource("quotapolicies"),
 			v1.SchemeGroupVersion.WithKind("QuotaPolicy"),
 			func() *v1.QuotaPolicy { return &v1.QuotaPolicy{} },

@@ -17,7 +17,7 @@ const (
 	AdmissionReview     = "AdmissionReview"
 )
 
-func NewHandler(s *server.Server) http.HandlerFunc {
+func ValidHandler(s *server.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var admissionReview admissionv1.AdmissionReview
 

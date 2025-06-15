@@ -30,9 +30,8 @@ type QuotaPolicyLister interface {
 	// List lists all QuotaPolicies in the indexer.
 	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*quotav1.QuotaPolicy, err error)
-	// Get retrieves the QuotaPolicy from the index for a given name.
-	// Objects returned here must be treated as read-only.
-	Get(name string) (*quotav1.QuotaPolicy, error)
+	// QuotaPolicies returns an object that can list and get QuotaPolicies.
+	QuotaPolicies(namespace string) QuotaPolicyNamespaceLister
 	QuotaPolicyListerExpansion
 }
 
@@ -44,4 +43,27 @@ type quotaPolicyLister struct {
 // NewQuotaPolicyLister returns a new QuotaPolicyLister.
 func NewQuotaPolicyLister(indexer cache.Indexer) QuotaPolicyLister {
 	return &quotaPolicyLister{listers.New[*quotav1.QuotaPolicy](indexer, quotav1.Resource("quotapolicy"))}
+}
+
+// QuotaPolicies returns an object that can list and get QuotaPolicies.
+func (s *quotaPolicyLister) QuotaPolicies(namespace string) QuotaPolicyNamespaceLister {
+	return quotaPolicyNamespaceLister{listers.NewNamespaced[*quotav1.QuotaPolicy](s.ResourceIndexer, namespace)}
+}
+
+// QuotaPolicyNamespaceLister helps list and get QuotaPolicies.
+// All objects returned here must be treated as read-only.
+type QuotaPolicyNamespaceLister interface {
+	// List lists all QuotaPolicies in the indexer for a given namespace.
+	// Objects returned here must be treated as read-only.
+	List(selector labels.Selector) (ret []*quotav1.QuotaPolicy, err error)
+	// Get retrieves the QuotaPolicy from the indexer for a given namespace and name.
+	// Objects returned here must be treated as read-only.
+	Get(name string) (*quotav1.QuotaPolicy, error)
+	QuotaPolicyNamespaceListerExpansion
+}
+
+// quotaPolicyNamespaceLister implements the QuotaPolicyNamespaceLister
+// interface.
+type quotaPolicyNamespaceLister struct {
+	listers.ResourceIndexer[*quotav1.QuotaPolicy]
 }

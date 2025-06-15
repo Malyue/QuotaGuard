@@ -27,8 +27,8 @@ type FakeQuotaV1 struct {
 	*testing.Fake
 }
 
-func (c *FakeQuotaV1) QuotaPolicies() v1.QuotaPolicyInterface {
-	return newFakeQuotaPolicies(c)
+func (c *FakeQuotaV1) QuotaPolicies(namespace string) v1.QuotaPolicyInterface {
+	return newFakeQuotaPolicies(c, namespace)
 }
 
 // RESTClient returns a RESTClient that is used to communicate

@@ -9,9 +9,12 @@ import (
 
 func main() {
 
-	s := server.NewServer()
+	s, err := server.NewServer("")
+	if err != nil {
+		klog.Fatalf("server init err: %v", err)
+	}
 
-	http.HandleFunc("/validate", handle.NewHandler(s))
+	http.HandleFunc("/validate", handle.ValidHandler(s))
 	klog.Info("Start QuotaGuard Webhook...")
 	if err := http.ListenAndServeTLS(":8443", "cert.pem", "key.pem", nil); err != nil {
 		klog.Fatalf("服务器启动失败: %v", err)
