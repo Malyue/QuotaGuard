@@ -1,0 +1,12 @@
+apiVersion: quota.malyue.com/v1
+kind: QuotaPolicy
+metadata:
+  name: example-quotapolicy
+spec:
+  rules:
+    - target:
+        kind: Namespace  # 限制目标类型（Namespace 或 Team）
+        key: "quota"   # 目标名称（例如 default 命名空间）
+      limit:
+        cpu: "2"         # 允许的最大 CPU（单位：核）
+        memory: "4Gi"    # 允许的最大内存

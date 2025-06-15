@@ -41,6 +41,8 @@ func NewServer(kubeconfigPath string) (*Server, error) {
 		5,
 	)
 
+	controller.Start()
+
 	svr := &Server{
 		QuotaManager: qm,
 		Controller:   controller,

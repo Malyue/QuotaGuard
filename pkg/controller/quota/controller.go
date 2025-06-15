@@ -93,12 +93,13 @@ func (c *Controller) processNextItem() bool {
 		return true
 	}
 
-	c.handleError(err, key)
+	//c.handleError(err, key)
 	return true
 }
 
 func (c *Controller) syncHandler(key string) error {
 	namespace, name, err := cache.SplitMetaNamespaceKey(key)
+	klog.Infof("Receive %s", key)
 	if err != nil {
 		return err
 	}

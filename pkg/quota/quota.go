@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	quotav1 "github.com/Malyue/quotaguard/pkg/apis/quota/v1"
+	"k8s.io/klog/v2"
 	"sync"
 )
 
@@ -71,7 +72,7 @@ func (m *QuotaManager) AddPolicy(rule QuotaPolicy) {
 		value = rule.Namespace
 	}
 
-	m.policys[prefix+value] = rule
+	m.policys[generateKey(prefix, value)] = rule
 }
 
 func (m *QuotaManager) DeletePolicy(key string) {
@@ -93,14 +94,20 @@ func (m *QuotaManager) GetPolicy(key string) (QuotaPolicy, bool) {
 	return rule, exists
 }
 
+func (m *QuotaManager) All() (map[string]QuotaPolicy, error) {
+	return m.policys, nil
+}
+
 func (m *QuotaManager) Validate(team, namespace string, cpu, memory string) (bool, error) {
 	if team != "" {
 		teamPolicy, exists := m.GetPolicy(generateKey(TeamKey, team))
+		klog.Info("teamPolicy: %v", teamPolicy)
 		if exists {
 			valid, err := teamPolicy.Valid(team, cpu, memory)
 			if err != nil {
 				return false, err
 			}
+			klog.Info("Validate team quota: %s", team)
 			if !valid {
 				return false, errors.New("the pod's resources is over the team quota policy")
 			}
@@ -109,6 +116,7 @@ func (m *QuotaManager) Validate(team, namespace string, cpu, memory string) (boo
 
 	if namespace != "" {
 		nsPolicy, exists := m.GetPolicy(generateKey(NamespaceKey, namespace))
+		klog.Info("namespacePolicy: %v", nsPolicy)
 		if !exists {
 			return true, nil
 		}
@@ -117,6 +125,8 @@ func (m *QuotaManager) Validate(team, namespace string, cpu, memory string) (boo
 		if err != nil {
 			return false, err
 		}
+
+		klog.Info("Validate namespace quota: %s", namespace)
 		if !valid {
 			return false, errors.New("the pod's resources is over the namespace quota policy")
 		}

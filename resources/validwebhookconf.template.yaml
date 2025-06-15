@@ -10,7 +10,7 @@ webhooks:
         namespace: webhook-system
         path: "/validate"
         port: 443
-      caBundle: <base64编码的CA证书>  # 需要替换为实际值
+      caBundle: "{{CA_BUNDLE}}"  # 需要替换为实际值
     rules:
       - operations: ["CREATE","UPDATE"]
         apiGroups: [""]
